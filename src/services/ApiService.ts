@@ -5,7 +5,7 @@ import axios, {
     AxiosError
   } from 'axios'
   
-  const baseURL = 'https://ttc-fleets.deno.dev'
+  const baseURL = ''
 
   /** Some CORS Issues i am using CORS Unblock Chrome Extension */
   const config: AxiosRequestConfig = {
