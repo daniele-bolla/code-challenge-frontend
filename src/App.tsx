@@ -9,6 +9,13 @@ import { Vehicle } from './types/vehicle';
 
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Snapshot } from './types/data';
 
 
@@ -90,10 +97,8 @@ function App() {
     }
 
     const vehicleData = searchVehichle();
-    debugger
     if(vehicleData){
       setSelectedVehicleData(vehicleData)
-      debugger
       if ( vehicleData.locations) {
         setLocations(JSON.parse(vehicleData.locations));
         console.log(locations)
@@ -134,7 +139,33 @@ function App() {
 
 
       <h1>Worn Tyres Platform</h1>
-      <div id='map-container' ref={mapContainer}/>
+      {selectedVehicleData && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Snapshot Data</CardTitle>
+            <CardDescription>Data for the selected vehicle</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div>Min PSU1 Voltage: {selectedVehicleData.minPsu1Voltage}</div>
+              <div>Max PSU1 Voltage: {selectedVehicleData.maxPsu1Voltage}</div>
+              <div>Avg PSU1 Voltage: {selectedVehicleData.avgPsu1Voltage}</div>
+              <div>Min PSU2 Voltage: {selectedVehicleData.minPsu2Voltage}</div>
+              <div>Max PSU2 Voltage: {selectedVehicleData.maxPsu2Voltage}</div>
+              <div>Avg PSU2 Voltage: {selectedVehicleData.avgPsu2Voltage}</div>
+              <div>Min Humidity: {selectedVehicleData.minHumidity}</div>
+              <div>Max Humidity: {selectedVehicleData.maxHumidity}</div>
+              <div>Avg Humidity: {selectedVehicleData.avgHumidity}</div>
+              <div>Min Pressure: {selectedVehicleData.minPressure}</div>
+              <div>Max Pressure: {selectedVehicleData.maxPressure}</div>
+              <div>Avg Pressure: {selectedVehicleData.avgPressure}</div>
+              <div>Routed KM Travelled: {selectedVehicleData.routedKmTravelled}</div>
+              <div>KM Travelled: {selectedVehicleData.kmTravelled}</div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+        <div id='map-container' ref={mapContainer}/>
     </>
   )
 }
