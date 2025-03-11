@@ -1,12 +1,15 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import mapboxgl from 'mapbox-gl'
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './App.css'
+import { fetchFleets } from './services/FleetService';
+import { Fleet } from './types/fleet';
+import { Vehicle } from './types/vehicle';
 
 function App() {
+  /**Map */
   const mapContainer = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     mapboxgl.accessToken = "pk.eyJ1IjoidHRjLWhheWVza2ciLCJhIjoiY203dWNoZG94MDIyYzJxcjZ6Y2EwY3BybyJ9.Jn4YpF1DPcTaVmqN-uyJxg";
 
@@ -28,6 +31,29 @@ function App() {
       return () => map.remove();
     }
   }, []);
+  const [fleets, setFleets] = useState<Fleet[]>([]);
+  // const [selectedFleet, setSelectedFleet] = useState<string | null>(null);
+  // const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const getFleets = async () => {
+    const fleets = await fetchFleets();
+    setFleets(fleets);
+  };
+  useEffect(() => {
+    getFleets();
+  }, []);
+
+  // useEffect(() => {
+  //   if (selectedFleet) {
+  //     fetchVehicles(selectedFleet);
+  //   }
+  // }, [selectedFleet]);
+
+  // useEffect(() => {
+  //   if (selectedVehicle) {
+  //     fetchSnapshotData(selectedVehicle);
+  //   }
+  // }, [selectedVehicle]);
+  
   return (
     <>
       <h1>Worn Tyres Platform</h1>
