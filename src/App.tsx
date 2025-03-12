@@ -37,8 +37,8 @@ function mapFitBounds(map:mapboxgl.Map, coordinates:number[][]){
     [Math.min(...coordinates.map(loc => loc[0])), Math.min(...coordinates.map(loc => loc[1]))],
     [Math.max(...coordinates.map(loc => loc[0])), Math.max(...coordinates.map(loc => loc[1]))]
   ], {
-    padding: 40,
-    maxZoom: 14,
+    padding: 30,
+    maxZoom: 10,
   });
 }
 
@@ -50,7 +50,7 @@ function mapDrawRoute(map:mapboxgl.Map, coordinates:number[][]){
         'properties': {},
         'geometry': {
             'type': 'LineString',
-            'coordinates':coordinates
+            'coordinates': coordinates
         }
     }
   });
@@ -137,27 +137,29 @@ function App() {
   const handleVehicleChange = (value: string) => {
     setSelectedVehicle(value);
 
-    function searchVehichle(page = 0){
-      if(page) getSnapshotData(page)
+    function searchVehichle(page = 1){
+      // getSnapshotData(page)
       const vehicleData = snapshots.find((item: Snapshot) => item.vehicleId === Number(value));
       if(vehicleData) {
         return vehicleData
-      } else if(page == 3) {
-        return false
-      } else {
-        searchVehichle(page++)
-      }
-    }
-
-    if(mapRef.current){
-      const coordinates = parsedLocations
-      mapFitBounds(mapRef.current, coordinates)
-      mapDrawRoute(mapRef.current, coordinates)
+       } 
+       //else if(page == 3) {
+      //   return false
+      // } else {
+      //   searchVehichle(page++)
+      // }
     }
     const vehicleData = searchVehichle()
     if(vehicleData){
       setSelectedVehicleData(vehicleData)
     }
+    debugger
+    if(mapRef.current){
+      const coordinates = parsedLocations
+      mapFitBounds(mapRef.current, coordinates)
+      mapDrawRoute(mapRef.current, coordinates)
+    }
+
  
   };
   

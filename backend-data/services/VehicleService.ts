@@ -7,7 +7,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export const getVehicles = async (): Promise<Vehicle[]> => {
+export const getVehicles = async (fleetId): Promise<Vehicle[]> => {
   return new Promise((resolve, reject) => {
     const vehicles: Vehicle[] = [];
     const filePath = path.join(__dirname, '../data/vehicles.csv');
@@ -15,7 +15,9 @@ export const getVehicles = async (): Promise<Vehicle[]> => {
     createReadStream(filePath)
       .pipe(parse({ columns:true }))
       .on('data', (row: Vehicle) => {
-        vehicles.push(row);
+        if (row.fleetId === fleetId) {
+          vehicles.push(row);
+        }
       })
       .on('end', () => {
         resolve(vehicles);

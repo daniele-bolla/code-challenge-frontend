@@ -15,14 +15,12 @@ export const getFleets = async (): Promise<Fleet[]> => {
     createReadStream(filePath)
       .pipe(parse({ columns:true }))
       .on('data', (row: Fleet) => {
-        console.log(row)
         fleets.push(row);
       })
       .on('end', () => {
         resolve(fleets);
       })
       .on('error', (error) => {
-        console.log(error)
         reject(error);
       });
   });

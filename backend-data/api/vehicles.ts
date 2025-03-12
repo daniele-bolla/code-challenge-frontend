@@ -11,7 +11,7 @@ router.get('/', async (req, res, next) => {
       return sendResponse(res, 400, null, 'fleetId is required');
     }
 
-    const vehicles = await getVehicles()
+    const vehicles = await getVehicles(fleetId)
     sendResponse(res, 200, vehicles);
   }catch (error) {
     next(error);
