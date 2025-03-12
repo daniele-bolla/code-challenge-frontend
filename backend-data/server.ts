@@ -6,6 +6,7 @@ import snapshotRoutes from './api/snapshots';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { errorHandler } from './middlewares/errorHandler';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -21,6 +22,8 @@ app.use('/fleets', fleetRoutes);
 app.use('/vehicles', vehicleRoutes);
 app.use('/snapshots', snapshotRoutes);
 
+// Error handling middleware
+app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

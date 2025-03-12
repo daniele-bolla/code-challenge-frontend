@@ -1,20 +1,20 @@
 import express from 'express';
 import { getVehicles } from '../services/VehicleService';
+import { sendResponse } from '../utils/response';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const { fleetId } = req.query;
     if (!fleetId) {
-      return res.status(400).json({ error: 'fleetId is required' });
+      return sendResponse(res, 400, null, 'fleetId is required');
     }
-    
+
     const vehicles = await getVehicles()
-    res.json(vehicles);
-  } catch (error) {
-    console.error('Error fetching vehicles:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    sendResponse(res, 200, vehicles);
+  }catch (error) {
+    next(error);
   }
 });
 

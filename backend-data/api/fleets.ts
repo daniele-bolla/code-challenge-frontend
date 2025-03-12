@@ -1,15 +1,15 @@
 import express from 'express';
 import { getFleets } from '../services/FleetService';
+import { sendResponse } from '../utils/response';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
     const fleets = await getFleets()
-    res.json(fleets);
+    sendResponse(res, 200, fleets);
   } catch (error) {
-    console.error('Error fetching fleets:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    next(error)
   }
 });
 
