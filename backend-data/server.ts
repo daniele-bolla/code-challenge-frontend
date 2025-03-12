@@ -13,7 +13,7 @@ app.use(express.json());
 // Routes
 app.use('/fleets', fleetRoutes);
 app.use('/vehicles', vehicleRoutes);
-app.use('/snapshot', snapshotRoutes);
+app.use('/snapshots', snapshotRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

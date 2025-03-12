@@ -5,6 +5,11 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
+    const { fleetId } = req.query;
+    if (!fleetId) {
+      return res.status(400).json({ error: 'fleetId is required' });
+    }
+    
     const vehicles = await getVehicles()
     res.json(vehicles);
   } catch (error) {
