@@ -1,17 +1,17 @@
-import ApiService from '@/services/ApiService'
+import ApiService, { baseURL } from '@/services/ApiService'
 import { Fleet } from '@/types/fleet';
 import { Vehicle } from '@/types/vehicle';
 import {Snapshot} from '@/types/data';
 
 export async function fetchFleets():Promise<Fleet[]> {
-  const { data }= await ApiService.get (`https://ttc-fleets.deno.dev`);
+  const { data }= await ApiService.get (`/fleets`);
   return data
 }
 
-export const fleetImageUrl = "https://ttc-images.deno.dev/?imageId="
+export const fleetImageUrl = baseURL + "/images/fleets/"
 
 export async function fetchVehicles(fleetId: string): Promise<Vehicle[]> {
-  const { data }= await ApiService.get (`https://ttc-vehicles.deno.dev?fleetId=${fleetId}`);
+  const { data }= await ApiService.get (`/vehicles?fleetId=${fleetId}`);
   return data
 };
 
@@ -26,8 +26,8 @@ type SnapshotsResponse = {
 
 }
 
-export async function fetchSnapshotData(page?: number): Promise<SnapshotsResponse> {
-  const url = page? `https://ttc-data.deno.dev?page=${page}&itemsPerPage=300`: `https://ttc-data.deno.dev?itemsPerPage=300`
+export async function fetchSnapshotData(page: number = 1): Promise<SnapshotsResponse> {
+  const url = `/snapshots?page=${page}`;
   const { data }= await ApiService.get (url);
   return data
 };

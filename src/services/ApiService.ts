@@ -5,13 +5,11 @@ import axios, {
     AxiosError
   } from 'axios'
   
-  const baseURL = ''
+  export const baseURL = 'http://localhost:3000'
 
   /** Some CORS Issues i am using CORS Unblock Chrome Extension */
   const config: AxiosRequestConfig = {
     baseURL,
-    timeout: 20000,
-    withCredentials: false,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -34,7 +32,8 @@ import axios, {
   }
   
   const successHandler = (response: AxiosResponse) => {
-    return response
+    const { data } = response
+    return data
   }
   
   apiService.interceptors.response.use(
