@@ -37,12 +37,12 @@ function mapFitBounds(map:mapboxgl.Map, coordinates:number[][]){
     [Math.min(...coordinates.map(loc => loc[0])), Math.min(...coordinates.map(loc => loc[1]))],
     [Math.max(...coordinates.map(loc => loc[0])), Math.max(...coordinates.map(loc => loc[1]))]
   ], {
-    padding: 30,
-    maxZoom: 10,
+    padding: 20,
+    maxZoom: 24,
   });
 }
 
-function mapDrawRoute(map:mapboxgl.Map, coordinates:number[][]){
+function mapDrawRouteAndPoint(map:mapboxgl.Map, coordinates:number[][]){
   map.addSource('route', {
     'type': 'geojson',
     'data': {
@@ -54,6 +54,19 @@ function mapDrawRoute(map:mapboxgl.Map, coordinates:number[][]){
         }
     }
   });
+
+  map.addSource('vehicle', {
+    'type': 'geojson',
+    'data': {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Point',
+        'coordinates': coordinates[0] 
+      },
+      'properties': {}
+    }
+  });
+  
   map.addLayer({
     'id': 'route',
     'type': 'line',
@@ -67,6 +80,109 @@ function mapDrawRoute(map:mapboxgl.Map, coordinates:number[][]){
         'line-width': 8
     }
   });
+
+  map.addLayer({
+    'id': 'vehicle',
+    'type': 'circle',
+    'source': 'vehicle',
+    'paint': {
+      'circle-radius': 8,
+      'circle-color': '#FF0000' 
+    }
+  });
+
+
+  let currentIndex = 0;
+  let animationFrameId:number | null = null;
+
+  function animateVehicle() {
+    const nextIndex = currentIndex + 1;
+    const currentCoord: [number, number] = [coordinates[currentIndex][0], coordinates[currentIndex][1]];
+    const vehiclePoint = map.getSource('vehicle') as mapboxgl.GeoJSONSource
+    if(vehiclePoint){
+      vehiclePoint.setData({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': currentCoord
+        },
+        'properties': {}
+      });
+    
+      map.easeTo({
+        center: currentCoord,
+        duration: 1000,
+        easing: (t) => t
+      });
+    }
+
+    currentIndex = nextIndex;
+
+    if (currentIndex < coordinates.length) {
+      animationFrameId = requestAnimationFrame(animateVehicle);
+    } else {
+      stopAnimation();
+    }
+  }
+
+  animateVehicle();
+
+  function stopAnimation() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  }
+}
+
+function mapAnimatePoint(map:mapboxgl.Map, coordinates:number[][]){
+  let currentIndex = 0;
+  let animationFrameId:number | null = null;
+
+  function animateVehicle() {
+    const nextIndex = currentIndex + 1;
+    const currentCoord: [number, number] = [coordinates[currentIndex][0], coordinates[currentIndex][1]];
+    const vehiclePoint = map.getSource('vehicle') as mapboxgl.GeoJSONSource
+    if(vehiclePoint){
+      vehiclePoint.setData({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': currentCoord
+        },
+        'properties': {}
+      })
+      map.easeTo({
+        center: currentCoord,
+        duration: 2000,
+        easing: (t) => t
+      });
+
+    }
+
+    currentIndex = nextIndex;
+
+    if (currentIndex < coordinates.length) {
+      animationFrameId = requestAnimationFrame(animateVehicle);
+    } else {
+      stopAnimation();
+    }
+  }
+
+  map.once('idle', () => {
+    animateVehicle();
+  });
+
+  function stopAnimation() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  }
+}
+
+function delay(ms: number) {
+  return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
 
@@ -86,8 +202,8 @@ function App() {
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/dark-v11",
         center: [-74.0060152, 40.7127281],
-        zoom: 5,
-        maxZoom: 15,
+        zoom: 16,
+        maxZoom: 24,
       });
       mapRef.current = map;
       map.addControl(new mapboxgl.NavigationControl(), "top-left");
@@ -134,7 +250,7 @@ function App() {
     }
   };
 
-  const handleVehicleChange = (value: string) => {
+  const handleVehicleChange = async (value: string) => {
     setSelectedVehicle(value);
 
     function searchVehichle(page = 1){
@@ -153,11 +269,12 @@ function App() {
     if(vehicleData){
       setSelectedVehicleData(vehicleData)
     }
-    debugger
     if(mapRef.current){
       const coordinates = parsedLocations
       mapFitBounds(mapRef.current, coordinates)
-      mapDrawRoute(mapRef.current, coordinates)
+      mapDrawRouteAndPoint(mapRef.current, coordinates)
+      await delay(6000)
+      mapAnimatePoint(mapRef.current, coordinates)
     }
 
  
