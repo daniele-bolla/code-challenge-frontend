@@ -8,10 +8,7 @@ export async function fetchFleets():Promise<Fleet[]> {
   return data
 }
 
-export async function fetchFleetImage(logo: string): Promise<Vehicle[]> {
-  const { data }= await ApiService.get (`https://ttc-images.deno.dev/?imageId=${logo}`);
-  return data
-};
+export const fleetImageUrl = "https://ttc-images.deno.dev/?imageId="
 
 export async function fetchVehicles(fleetId: string): Promise<Vehicle[]> {
   const { data }= await ApiService.get (`https://ttc-vehicles.deno.dev?fleetId=${fleetId}`);
