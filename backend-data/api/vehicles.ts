@@ -1,10 +1,11 @@
 import express from 'express';
+import { getVehicles } from '../services/VehicleService';
 
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const vehicles ={}
+    const vehicles = await getVehicles()
     res.json(vehicles);
   } catch (error) {
     console.error('Error fetching vehicles:', error);
